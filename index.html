@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eolas OS</title>
+    <title>Nexus OS</title>
     <link rel="icon" type="image/x-icon" href="https://www.rw-designer.com/icon-image/18758-256x256x32.png">
     <!-- Suppress Tailwind Production Warning -->
     <script>
@@ -31,6 +31,10 @@
             --text-color: #333;
             --toolbar-bg: #f5f6f7;
             --border-color: #ccc;
+            
+            /* Customizable AI Variables */
+            --ai-color: #00ff00;
+            --ai-color-rgb: 0, 255, 0;
         }
         
         * { box-sizing: border-box; user-select: none; }
@@ -103,9 +107,9 @@
         /* === TASKBAR & START MENU === */
         #taskbar { display: none; position: absolute; bottom: 0; left: 0; width: 100%; height: 40px; background: var(--taskbar-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.3); z-index: 1000; align-items: center; padding: 0 10px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 -2px 10px rgba(0,0,0,0.5); }
         
-        #start-button { width: 48px; height: 48px; position: relative; margin-top: -8px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #5ba9e1, #1b5284); box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 -2px 5px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.7); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.1s, box-shadow 0.2s; z-index: 1001; margin-right: 15px;}
-        #start-button:hover { box-shadow: 0 0 15px #5ba9e1, inset 0 2px 5px rgba(255,255,255,0.9); }
-        #start-button i { color: white; font-size: 24px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        #start-button { width: 44px; height: 44px; position: relative; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.1s, filter 0.2s; z-index: 1001; margin-right: 15px;}
+        #start-button:hover { filter: brightness(1.2) drop-shadow(0 0 10px rgba(255,255,255,0.3)); transform: scale(1.05); }
+        #start-button img { width: 100%; height: 100%; object-fit: contain; }
         
         .taskbar-item { width: 45px; height: 34px; border-radius: 3px; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; margin-right: 4px; }
         .taskbar-item:hover { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); box-shadow: inset 0 0 10px rgba(255,255,255,0.2); }
@@ -135,11 +139,11 @@
         /* === BOOT & LOGIN === */
         #boot-screen, #login-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #boot-screen { background: #000; color: white; transition: opacity 1s; }
-        .win-logo-boot { font-size: 80px; text-shadow: 0 0 20px #00aaff; animation: pulseGlow 2s infinite alternate; }
+        .win-logo-boot { animation: pulseGlow 2s infinite alternate; width: 100px; height: 100px; object-fit: contain; }
         .loading-bar-container { width: 250px; height: 6px; background: #333; border-radius: 3px; margin-top: 40px; overflow: hidden; position: relative;}
         .loading-bar { width: 40%; height: 100%; background: linear-gradient(90deg, #000, #00aaff, #000); position: absolute; animation: loadScan 1.5s infinite linear; }
         
-        @keyframes pulseGlow { from { text-shadow: 0 0 10px #00aaff; transform: scale(1); } to { text-shadow: 0 0 40px #00aaff, 0 0 80px #fff; transform: scale(1.05); } }
+        @keyframes pulseGlow { from { filter: drop-shadow(0 0 10px #00aaff); transform: scale(1); } to { filter: drop-shadow(0 0 30px #00aaff); transform: scale(1.05); } }
         @keyframes loadScan { 0% { left: -40%; } 100% { left: 100%; } }
 
         #login-screen { 
@@ -154,14 +158,14 @@
         .login-submit-btn { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: #0078d7; border-radius: 4px; border: 1px solid #005a9e; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; }
         .login-submit-btn:hover { background: #005a9e; }
 
-        /* === 3D AI SPHERE === */
+        /* === 3D AI SPHERE (Dynamic Custom Colors) === */
         #ai-container { position: absolute; bottom: 60px; right: 20px; width: 120px; height: 120px; z-index: 500; cursor: pointer; perspective: 800px; display: none; }
         .ai-sphere { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: floatSphere 4s ease-in-out infinite; }
-        .ai-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid rgba(0, 255, 0, 0.6); box-shadow: 0 0 15px rgba(0, 255, 0, 0.8), inset 0 0 15px rgba(0, 255, 0, 0.8); }
+        .ai-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid rgba(var(--ai-color-rgb), 0.6); box-shadow: 0 0 15px rgba(var(--ai-color-rgb), 0.8), inset 0 0 15px rgba(var(--ai-color-rgb), 0.8); transition: border-color 0.3s, box-shadow 0.3s;}
         .ring1 { animation: spin1 4s linear infinite; }
         .ring2 { animation: spin2 5s linear infinite; }
         .ring3 { animation: spin3 6s linear infinite; }
-        .ai-core { position: absolute; top: 25%; left: 25%; width: 50%; height: 50%; background: radial-gradient(circle, #fff, #00ff00); border-radius: 50%; box-shadow: 0 0 30px #00ff00; animation: pulseCore 2s infinite alternate; }
+        .ai-core { position: absolute; top: 25%; left: 25%; width: 50%; height: 50%; background: radial-gradient(circle, #fff, var(--ai-color)); border-radius: 50%; box-shadow: 0 0 30px var(--ai-color); animation: pulseCore 2s infinite alternate; transition: background 0.3s, box-shadow 0.3s;}
         
         .ai-listening .ai-ring { border-color: rgba(255, 0, 255, 0.8); box-shadow: 0 0 20px rgba(255, 0, 255, 0.9); }
         .ai-listening .ai-core { background: radial-gradient(circle, #fff, #ff00ff); box-shadow: 0 0 40px #ff00ff; animation: pulseCoreFast 0.5s infinite alternate; }
@@ -234,8 +238,8 @@
 
     <!-- BOOT SCREEN -->
     <div id="boot-screen">
-        <i class="fab fa-windows win-logo-boot"></i>
-        <h2 class="mt-8 text-2xl font-light tracking-widest text-gray-300">Starting Windows</h2>
+        <img src="https://www.rw-designer.com/icon-image/18758-256x256x32.png" class="win-logo-boot" alt="Nexus OS">
+        <h2 class="mt-8 text-2xl font-light tracking-widest text-gray-300">Starting Nexus OS</h2>
         <div class="loading-bar-container"><div class="loading-bar"></div></div>
     </div>
 
@@ -287,7 +291,7 @@
         <div id="window-container" style="width: 100%; height: 100%; position: absolute; top:0; left:0; pointer-events: none;"></div>
 
         <!-- AI Sphere -->
-        <div id="ai-container" onclick="OS.AI.toggleListen()" title="Eolas Voice AI (Click to Listen)">
+        <div id="ai-container" onclick="OS.AI.toggleListen()">
             <div class="ai-sphere">
                 <div class="ai-ring ring1"></div>
                 <div class="ai-ring ring2"></div>
@@ -299,7 +303,7 @@
         <!-- Taskbar -->
         <div id="taskbar">
             <div id="start-button" onclick="OS.UI.toggleStartMenu()">
-                <i class="fab fa-windows"></i>
+                <img src="https://www.rw-designer.com/icon-image/18758-256x256x32.png" alt="Start">
             </div>
             <div id="taskbar-apps" class="flex items-center">
                 <!-- Pinned and active apps here -->
@@ -353,7 +357,7 @@
 
     <script>
     /**
-     * EOLAS OS KERNEL & MANAGERS
+     * NEXUS OS KERNEL & MANAGERS
      */
     
     // --- 1. CORE UTILITIES ---
@@ -372,15 +376,13 @@
                 if (type === 'startup') {
                     const freqs = [523.25, 659.25, 783.99, 1046.50];
                     freqs.forEach((freq, i) => {
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
+                        const osc = ctx.createOscillator(); const gain = ctx.createGain();
                         osc.connect(gain); gain.connect(ctx.destination);
                         osc.type = 'sine'; osc.frequency.value = freq;
                         gain.gain.setValueAtTime(0, ctx.currentTime);
                         gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + (i * 0.15) + 0.1);
                         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + (i * 0.15) + 2.0);
-                        osc.start(ctx.currentTime + (i * 0.15));
-                        osc.stop(ctx.currentTime + (i * 0.15) + 2.0);
+                        osc.start(ctx.currentTime + (i * 0.15)); osc.stop(ctx.currentTime + (i * 0.15) + 2.0);
                     });
                 } else if (type === 'error') {
                     const osc = ctx.createOscillator(); const gain = ctx.createGain();
@@ -402,8 +404,8 @@
     };
 
     // --- 2. INDEXED DB WRAPPER ---
-    const EolasDB = {
-        dbName: 'EolasOS_DB', version: 2, db: null,
+    const NexusDB = {
+        dbName: 'NexusOS_DB', version: 1, db: null,
         init() {
             return new Promise((resolve, reject) => {
                 const request = indexedDB.open(this.dbName, this.version);
@@ -436,11 +438,11 @@
 
     // --- 3. SYSTEM STATE & CONFIG ---
     const OS = {
-        state: { user: null, windows: [], zIndex: 100, installedApps: [] },
+        state: { user: null, windows: [], zIndex: 100, installedApps: [], aiName: 'Nexus', aiColor: '#00ff00' },
         registry: { 
             'explorer': { id: 'explorer', name: 'File Explorer', icon: 'fas fa-folder-open', color: '#ffb300', system: true, handler: 'renderExplorer' },
             'browser': { id: 'browser', name: 'Web Browser', icon: 'fab fa-chrome', color: '#4285f4', system: true, handler: 'renderBrowser' },
-            'aichat': { id: 'aichat', name: 'Eolas AI Chat', icon: 'fas fa-comment-dots', color: '#9c27b0', system: true, handler: 'renderAIChat' },
+            'aichat': { id: 'aichat', name: 'Nexus AI Chat', icon: 'fas fa-comment-dots', color: '#9c27b0', system: true, handler: 'renderAIChat' },
             'settings': { id: 'settings', name: 'Control Panel', icon: 'fas fa-cog', color: '#607d8b', system: true, handler: 'renderSettings' },
             'camera': { id: 'camera', name: 'Camera', icon: 'fas fa-camera', color: '#333', system: true, handler: 'renderCamera' },
             'installer': { id: 'installer', name: 'App Installer', icon: 'fas fa-download', color: '#4caf50', system: true, handler: 'renderInstaller' },
@@ -451,11 +453,11 @@
             'ytmusic': { id: 'ytmusic', name: 'YouTube Music', icon: 'fab fa-youtube', color: '#ff0000', system: false, type: 'iframe', url: 'https://music.youtube.com/' }
         },
         async init() {
-            await EolasDB.init();
+            await NexusDB.init();
             this.UI.updateClock(); setInterval(() => this.UI.updateClock(), 1000);
-            const session = localStorage.getItem('eolas_session');
+            const session = localStorage.getItem('nexus_session');
             if (session) {
-                const userData = await EolasDB.get('users', session);
+                const userData = await NexusDB.get('users', session);
                 if (userData) { this.Auth.completeLogin(userData); return; }
             }
             setTimeout(() => {
@@ -494,23 +496,25 @@
             const pass = document.getElementById('reg-password').value;
             if(!user || !pass) { await OS.UI.showModal({type: 'alert', title: 'Error', text: 'Enter username and password'}); return; }
             
-            const existing = await EolasDB.get('users', user);
+            const existing = await NexusDB.get('users', user);
             if(existing) { await OS.UI.showModal({type: 'alert', title: 'Error', text: 'User already exists'}); return; }
             
             const hash = await Utils.hashPassword(pass);
-            await EolasDB.put('users', { username: user, hash: hash, avatar: this.pendingAvatar, created: Date.now() });
+            await NexusDB.put('users', { username: user, hash: hash, avatar: this.pendingAvatar, created: Date.now() });
             
             const defaultDirs = ['Desktop', 'Documents', 'Pictures', 'Videos', 'Music'];
             for(let dir of defaultDirs) {
-                await EolasDB.put('files', { path: `/Users/${user}/${dir}`, name: dir, type: 'folder', owner: user, parent: `/Users/${user}` });
+                await NexusDB.put('files', { path: `/Users/${user}/${dir}`, name: dir, type: 'folder', owner: user, parent: `/Users/${user}` });
             }
 
-            await EolasDB.put('settings', {
+            await NexusDB.put('settings', {
                 username: user,
                 wallpaper: 'https://upload.wikimedia.org/wikipedia/commons/e/e5/Windows_7_default_login_background.jpg',
                 pinnedTaskbar: ['browser', 'explorer', 'aichat'],
                 desktopPins: ['explorer', 'browser', 'aichat', 'videoplayer', 'widevideo', 'pixabay', 'ytmusic', 'canva', 'installer'],
-                desktopIconPositions: {}
+                desktopIconPositions: {},
+                aiName: 'Nexus',
+                aiColor: '#00ff00'
             });
 
             await OS.UI.showModal({type: 'alert', title: 'Success', text: 'Account created. Please log in.'});
@@ -523,13 +527,13 @@
             
             if(user === "User") { await OS.UI.showModal({type: 'alert', title: 'Login', text: 'Please select a user or create one.'}); return; }
             
-            const userData = await EolasDB.get('users', user);
+            const userData = await NexusDB.get('users', user);
             if(!userData) { await OS.UI.showModal({type: 'alert', title: 'Login', text: 'User not found'}); return; }
             
             const hash = await Utils.hashPassword(pass);
             if(userData.hash !== hash) { Utils.playAudio('error'); await OS.UI.showModal({type: 'alert', title: 'Login', text: 'Incorrect password'}); return; }
             
-            if(remember) localStorage.setItem('eolas_session', user);
+            if(remember) localStorage.setItem('nexus_session', user);
             this.completeLogin(userData);
         },
         selectUserForLogin(userObj) {
@@ -550,15 +554,15 @@
                 document.getElementById('start-avatar').style.backgroundImage = `url('${userData.avatar}')`;
             }
             
-            document.getElementById('taskbar').style.display = 'flex'; // Show taskbar only after login
+            document.getElementById('taskbar').style.display = 'flex'; 
             Utils.playAudio('startup'); await OS.UI.loadDesktop(); document.getElementById('ai-container').style.display = 'block';
         },
         logout() {
-            localStorage.removeItem('eolas_session'); OS.state.user = null;
+            localStorage.removeItem('nexus_session'); OS.state.user = null;
             document.getElementById('window-container').innerHTML = ''; document.getElementById('desktop-icons-container').innerHTML = '';
             document.getElementById('taskbar-apps').innerHTML = ''; document.getElementById('start-menu').classList.remove('show');
             document.getElementById('ai-container').style.display = 'none'; 
-            document.getElementById('taskbar').style.display = 'none'; // Hide taskbar on logout
+            document.getElementById('taskbar').style.display = 'none';
             OS.state.windows = [];
             document.getElementById('login-screen').style.display = 'flex'; document.getElementById('login-screen').style.opacity = '1';
             OS.UI.populateUserList(); document.getElementById('login-password').value = '';
@@ -577,7 +581,7 @@
             document.getElementById('register-view').style.display = view === 'register' ? 'block' : 'none';
         },
         async populateUserList() {
-            const users = await EolasDB.getAll('users');
+            const users = await NexusDB.getAll('users');
             const container = document.getElementById('user-list-container');
             const existingDiv = document.getElementById('existing-users');
             if (users.length === 0) { existingDiv.classList.add('hidden'); this.toggleAuthView('register'); return; }
@@ -592,12 +596,11 @@
             if (users.length > 0 && document.getElementById('login-username-display').innerText === "User") OS.Auth.selectUserForLogin(users[0]);
         },
         
-        // --- CUSTOM MODAL SYSTEM (Replaces alert, prompt, confirm) ---
         showModal(options) {
             return new Promise((resolve) => {
                 const overlay = document.getElementById('os-modal-overlay');
                 overlay.classList.remove('hidden');
-                document.getElementById('os-modal-title').innerText = options.title || 'Eolas OS';
+                document.getElementById('os-modal-title').innerText = options.title || 'Nexus OS';
                 document.getElementById('os-modal-text').innerHTML = options.text || '';
                 
                 const inputContainer = document.getElementById('os-modal-input-container');
@@ -605,12 +608,8 @@
                 const btnContainer = document.getElementById('os-modal-buttons');
                 
                 if(options.type === 'prompt') {
-                    inputContainer.classList.remove('hidden');
-                    input.value = '';
-                    input.focus();
-                } else {
-                    inputContainer.classList.add('hidden');
-                }
+                    inputContainer.classList.remove('hidden'); input.value = ''; input.focus();
+                } else { inputContainer.classList.add('hidden'); }
 
                 const cleanup = () => { overlay.classList.add('hidden'); overlay.onkeydown = null; };
 
@@ -618,7 +617,7 @@
                 
                 if(options.type === 'alert') {
                     const btn = document.createElement('button');
-                    btn.className = 'px-4 py-1 bg-gray-200 border border-gray-400 rounded hover:bg-gray-300';
+                    btn.className = 'px-4 py-1 bg-gray-200 border border-gray-400 rounded hover:bg-gray-300 text-black';
                     btn.innerText = 'OK';
                     btn.onclick = () => { cleanup(); resolve(true); };
                     btnContainer.appendChild(btn);
@@ -626,38 +625,49 @@
                 } else if(options.type === 'confirm') {
                     const btnYes = document.createElement('button');
                     btnYes.className = 'px-4 py-1 bg-blue-600 text-white border border-blue-700 rounded hover:bg-blue-700';
-                    btnYes.innerText = 'Yes';
-                    btnYes.onclick = () => { cleanup(); resolve(true); };
+                    btnYes.innerText = 'Yes'; btnYes.onclick = () => { cleanup(); resolve(true); };
                     const btnNo = document.createElement('button');
-                    btnNo.className = 'px-4 py-1 bg-gray-200 border border-gray-400 rounded hover:bg-gray-300';
-                    btnNo.innerText = 'No';
-                    btnNo.onclick = () => { cleanup(); resolve(false); };
+                    btnNo.className = 'px-4 py-1 bg-gray-200 border border-gray-400 rounded hover:bg-gray-300 text-black';
+                    btnNo.innerText = 'No'; btnNo.onclick = () => { cleanup(); resolve(false); };
                     btnContainer.appendChild(btnYes); btnContainer.appendChild(btnNo);
                 } else if(options.type === 'prompt') {
                     const btnOk = document.createElement('button');
-                    btnOk.id = 'os-modal-confirm-btn';
                     btnOk.className = 'px-4 py-1 bg-blue-600 text-white border border-blue-700 rounded hover:bg-blue-700';
-                    btnOk.innerText = 'OK';
-                    btnOk.onclick = () => { cleanup(); resolve(input.value); };
+                    btnOk.innerText = 'OK'; btnOk.onclick = () => { cleanup(); resolve(input.value); };
                     const btnCancel = document.createElement('button');
-                    btnCancel.className = 'px-4 py-1 bg-gray-200 border border-gray-400 rounded hover:bg-gray-300';
-                    btnCancel.innerText = 'Cancel';
-                    btnCancel.onclick = () => { cleanup(); resolve(null); };
+                    btnCancel.className = 'px-4 py-1 bg-gray-200 border border-gray-400 rounded hover:bg-gray-300 text-black';
+                    btnCancel.innerText = 'Cancel'; btnCancel.onclick = () => { cleanup(); resolve(null); };
                     btnContainer.appendChild(btnOk); btnContainer.appendChild(btnCancel);
                 }
                 document.getElementById('os-modal-close-btn').onclick = () => { cleanup(); resolve(null); };
             });
         },
 
+        applyAIColor(hex) {
+            document.documentElement.style.setProperty('--ai-color', hex);
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            if(result) {
+                const r = parseInt(result[1], 16); const g = parseInt(result[2], 16); const b = parseInt(result[3], 16);
+                document.documentElement.style.setProperty('--ai-color-rgb', `${r}, ${g}, ${b}`);
+            }
+        },
+
         async loadDesktop() {
             document.getElementById('start-username').innerText = OS.state.user;
-            let settings = await EolasDB.get('settings', OS.state.user);
-            if(settings && settings.wallpaper) document.getElementById('desktop').style.backgroundImage = `url('${settings.wallpaper}')`;
+            let settings = await NexusDB.get('settings', OS.state.user);
+            if(settings) {
+                if(settings.wallpaper) document.getElementById('desktop').style.backgroundImage = `url('${settings.wallpaper}')`;
+                OS.state.aiName = settings.aiName || 'Nexus';
+                OS.state.aiColor = settings.aiColor || '#00ff00';
+                this.applyAIColor(OS.state.aiColor);
+                document.getElementById('ai-container').title = `${OS.state.aiName} Voice AI (Click to Listen)`;
+            }
             
-            // ISOLATE CUSTOM APPS TO OWNER
-            const customApps = await EolasDB.getAll('apps');
+            const customApps = await NexusDB.getAll('apps');
             const userApps = customApps.filter(app => app.owner === OS.state.user);
             OS.state.installedApps = { ...OS.registry };
+            // Update AI Chat App Title dynamically
+            OS.state.installedApps['aichat'].name = `${OS.state.aiName} AI Chat`;
             userApps.forEach(app => { OS.state.installedApps[app.id] = app; });
 
             this.renderDesktopIcons(settings.desktopPins);
@@ -669,24 +679,20 @@
             const container = document.getElementById('desktop-icons-container');
             container.innerHTML = '';
             
-            let settings = await EolasDB.get('settings', OS.state.user);
+            let settings = await NexusDB.get('settings', OS.state.user);
             let positions = settings.desktopIconPositions || {};
             
             const GRID_W = 85; const GRID_H = 95;
             let currentX = 15; let currentY = 15;
 
             pins.forEach(appId => {
-                const app = OS.state.installedApps[appId];
-                if(!app) return;
-                
+                const app = OS.state.installedApps[appId]; if(!app) return;
                 const iconHTML = (app.icon.startsWith('http') || app.icon.startsWith('data:')) ? `<img src="${app.icon}" style="border-radius: 8px;">` : `<i class="${app.icon}" style="color: ${app.color || '#fff'}"></i>`;
                 const div = document.createElement('div');
-                div.className = 'desktop-icon';
-                div.dataset.appid = appId;
+                div.className = 'desktop-icon'; div.dataset.appid = appId;
                 
                 if(positions[appId]) {
-                    div.style.left = positions[appId].x + 'px';
-                    div.style.top = positions[appId].y + 'px';
+                    div.style.left = positions[appId].x + 'px'; div.style.top = positions[appId].y + 'px';
                 } else {
                     let collision = true;
                     while(collision) {
@@ -698,8 +704,7 @@
                     }
                     div.style.left = currentX + 'px'; div.style.top = currentY + 'px';
                     positions[appId] = {x: currentX, y: currentY};
-                    currentY += GRID_H;
-                    if(currentY > window.innerHeight - GRID_H - 100) { currentY = 15; currentX += GRID_W; }
+                    currentY += GRID_H; if(currentY > window.innerHeight - GRID_H - 100) { currentY = 15; currentX += GRID_W; }
                 }
 
                 div.innerHTML = `${iconHTML}<span>${app.name}</span>`;
@@ -714,8 +719,7 @@
                     ]);
                 };
                 
-                container.appendChild(div);
-                this.makeDesktopIconDraggable(div, appId);
+                container.appendChild(div); this.makeDesktopIconDraggable(div, appId);
             });
         },
         
@@ -741,8 +745,7 @@
                 let snappedX = Math.round((rawX - MARGIN_X) / GRID_W) * GRID_W + MARGIN_X;
                 let snappedY = Math.round((rawY - MARGIN_Y) / GRID_H) * GRID_H + MARGIN_Y;
                 
-                if (snappedX < MARGIN_X) snappedX = MARGIN_X;
-                if (snappedY < MARGIN_Y) snappedY = MARGIN_Y;
+                if (snappedX < MARGIN_X) snappedX = MARGIN_X; if (snappedY < MARGIN_Y) snappedY = MARGIN_Y;
                 if (snappedX > window.innerWidth - GRID_W) snappedX = window.innerWidth - GRID_W;
                 if (snappedY > window.innerHeight - GRID_H - 50) snappedY = window.innerHeight - GRID_H - 50;
                 
@@ -758,37 +761,31 @@
                 
                 iconElem.style.left = snappedX + 'px'; iconElem.style.top = snappedY + 'px';
                 
-                let settings = await EolasDB.get('settings', OS.state.user);
+                let settings = await NexusDB.get('settings', OS.state.user);
                 if(!settings.desktopIconPositions) settings.desktopIconPositions = {};
                 settings.desktopIconPositions[appId] = { x: snappedX, y: snappedY };
-                await EolasDB.put('settings', settings);
+                await NexusDB.put('settings', settings);
             });
         },
 
         async toggleDesktopPin(appId) {
-            let settings = await EolasDB.get('settings', OS.state.user);
+            let settings = await NexusDB.get('settings', OS.state.user);
             if(!settings.desktopPins) settings.desktopPins = [];
             if(settings.desktopPins.includes(appId)) {
                 settings.desktopPins = settings.desktopPins.filter(id => id !== appId);
                 if(settings.desktopIconPositions && settings.desktopIconPositions[appId]) delete settings.desktopIconPositions[appId];
-            } else {
-                settings.desktopPins.push(appId);
-            }
-            await EolasDB.put('settings', settings);
-            this.renderDesktopIcons(settings.desktopPins);
+            } else { settings.desktopPins.push(appId); }
+            await NexusDB.put('settings', settings); this.renderDesktopIcons(settings.desktopPins);
         },
 
         renderTaskbarPins(pins) {
             const container = document.getElementById('taskbar-apps');
             container.innerHTML = '';
             pins.forEach(appId => {
-                const app = OS.state.installedApps[appId];
-                if(!app) return;
-                
+                const app = OS.state.installedApps[appId]; if(!app) return;
                 const iconHTML = (app.icon.startsWith('http') || app.icon.startsWith('data:')) ? `<img src="${app.icon}" style="width: 20px; height: 20px; border-radius: 4px; object-fit: cover;">` : `<i class="${app.icon}" style="color: ${app.color || '#fff'}"></i>`;
                 const div = document.createElement('div');
-                div.className = 'taskbar-item pinned'; div.id = `tb-pin-${appId}`; div.title = app.name;
-                div.innerHTML = iconHTML;
+                div.className = 'taskbar-item pinned'; div.id = `tb-pin-${appId}`; div.title = app.name; div.innerHTML = iconHTML;
                 div.onclick = () => {
                     const runningWin = OS.state.windows.find(w => w.id.includes(`win_${appId}_`));
                     if(runningWin) {
@@ -801,60 +798,47 @@
                     e.preventDefault();
                     OS.UI.showContextMenu(e, [{ label: 'Unpin from taskbar', icon: 'fas fa-thumbtack', action: () => OS.UI.toggleTaskbarPin(appId) }]);
                 };
-                
-                this.makeTaskbarItemDraggable(div, appId);
-                container.appendChild(div);
+                this.makeTaskbarItemDraggable(div, appId); container.appendChild(div);
             });
         },
 
         makeTaskbarItemDraggable(div, appId) {
             div.draggable = true;
-            div.ondragstart = (e) => {
-                e.dataTransfer.setData('appId', appId);
-                div.style.opacity = '0.5';
-            };
-            div.ondragend = (e) => {
-                div.style.opacity = '1';
-            };
+            div.ondragstart = (e) => { e.dataTransfer.setData('appId', appId); div.style.opacity = '0.5'; };
+            div.ondragend = (e) => { div.style.opacity = '1'; };
             div.ondragover = (e) => { e.preventDefault(); };
             div.ondrop = async (e) => {
                 e.preventDefault();
                 const draggedAppId = e.dataTransfer.getData('appId');
                 if (!draggedAppId || draggedAppId === appId) return;
 
-                let settings = await EolasDB.get('settings', OS.state.user);
+                let settings = await NexusDB.get('settings', OS.state.user);
                 let pins = settings.pinnedTaskbar || [];
-
                 if(!pins.includes(draggedAppId)) pins.push(draggedAppId);
                 pins = pins.filter(id => id !== draggedAppId);
-
-                let targetIndex = pins.indexOf(appId);
-                if(targetIndex === -1) targetIndex = pins.length;
+                let targetIndex = pins.indexOf(appId); if(targetIndex === -1) targetIndex = pins.length;
 
                 const rect = div.getBoundingClientRect();
                 if (e.clientX - rect.left > rect.width / 2) targetIndex++;
 
                 pins.splice(targetIndex, 0, draggedAppId);
-                settings.pinnedTaskbar = pins;
-                await EolasDB.put('settings', settings);
-
-                OS.UI.renderTaskbarPins(pins);
-                OS.WM.updateTaskbar();
+                settings.pinnedTaskbar = pins; await NexusDB.put('settings', settings);
+                OS.UI.renderTaskbarPins(pins); OS.WM.updateTaskbar();
             };
         },
 
         async toggleTaskbarPin(appId) {
-            let settings = await EolasDB.get('settings', OS.state.user);
+            let settings = await NexusDB.get('settings', OS.state.user);
             if(settings.pinnedTaskbar.includes(appId)) settings.pinnedTaskbar = settings.pinnedTaskbar.filter(id => id !== appId);
             else settings.pinnedTaskbar.push(appId);
-            await EolasDB.put('settings', settings);
+            await NexusDB.put('settings', settings);
             this.renderTaskbarPins(settings.pinnedTaskbar); OS.WM.updateTaskbar();
         },
 
         async renderStartMenuApps() {
             const list = document.getElementById('start-apps-list');
             list.innerHTML = '<div class="text-xs font-bold mb-2 uppercase px-2 text-gray-500">All Programs</div>';
-            const settings = await EolasDB.get('settings', OS.state.user);
+            const settings = await NexusDB.get('settings', OS.state.user);
 
             Object.values(OS.state.installedApps).forEach(app => {
                 const iconHTML = (app.icon.startsWith('http') || app.icon.startsWith('data:')) ? `<img src="${app.icon}" style="width: 24px; height: 24px; margin-right:10px; border-radius:4px; object-fit: cover;">` : `<i class="${app.icon}" style="color: ${app.color || '#333'}"></i>`;
@@ -947,8 +931,7 @@
 
     document.addEventListener('click', (e) => {
         OS.UI.closeContextMenu();
-        const menu = document.getElementById('start-menu');
-        const startBtn = document.getElementById('start-button');
+        const menu = document.getElementById('start-menu'); const startBtn = document.getElementById('start-button');
         if (menu.classList.contains('show') && !menu.contains(e.target) && !startBtn.contains(e.target)) menu.classList.remove('show');
     });
 
@@ -974,14 +957,8 @@
 
             const iconHTML = (iconClass.startsWith('http') || iconClass.startsWith('data:')) ? `<img src="${iconClass}" style="width: 16px; height: 16px; margin-right:5px; border-radius:2px; object-fit: cover;">` : `<i class="${iconClass}" style="margin-right: 5px; font-size:14px;"></i>`;
             win.innerHTML = `
-                <div class="resizer resizer-n"></div>
-                <div class="resizer resizer-s"></div>
-                <div class="resizer resizer-e"></div>
-                <div class="resizer resizer-w"></div>
-                <div class="resizer resizer-nw"></div>
-                <div class="resizer resizer-ne"></div>
-                <div class="resizer resizer-sw"></div>
-                <div class="resizer resizer-se"></div>
+                <div class="resizer resizer-n"></div><div class="resizer resizer-s"></div><div class="resizer resizer-e"></div><div class="resizer resizer-w"></div>
+                <div class="resizer resizer-nw"></div><div class="resizer resizer-ne"></div><div class="resizer resizer-sw"></div><div class="resizer resizer-se"></div>
                 <div class="aero-titlebar"><div class="flex items-center text-sm font-semibold" style="text-shadow: 0 0 5px rgba(255,255,255,0.8);">${iconHTML} ${title}</div>
                     <div class="window-controls">
                         <div class="win-btn win-min" onclick="OS.WM.minimize('${id}')"><i class="fas fa-minus text-xs"></i></div>
@@ -1163,7 +1140,7 @@
             const content = document.getElementById(`${winId}_content`);
             content.innerHTML = '<div class="text-center w-full text-gray-400 mt-10"><i class="fas fa-circle-notch fa-spin"></i></div>';
             
-            const allFiles = await EolasDB.getAll('files');
+            const allFiles = await NexusDB.getAll('files');
             const files = allFiles.filter(f => f.parent === path);
             
             content.innerHTML = '';
@@ -1213,9 +1190,9 @@
             
             try {
                 if(type === 'folder') {
-                    await EolasDB.put('files', { path: fullPath, name: name, type: 'folder', parent: path, owner: OS.state.user });
+                    await NexusDB.put('files', { path: fullPath, name: name, type: 'folder', parent: path, owner: OS.state.user });
                 } else {
-                    await EolasDB.put('files', { path: fullPath, name: name, type: 'file', parent: path, owner: OS.state.user, data: new Blob([''], {type: 'text/plain'}), mime: 'text/plain' });
+                    await NexusDB.put('files', { path: fullPath, name: name, type: 'file', parent: path, owner: OS.state.user, data: new Blob([''], {type: 'text/plain'}), mime: 'text/plain' });
                 }
 
                 if (winId) {
@@ -1241,7 +1218,7 @@
             
             for(let file of files) {
                 const newPath = `${path}/${file.name}`;
-                await EolasDB.put('files', { path: newPath, name: file.name, type: 'file', parent: path, owner: OS.state.user, data: file, mime: file.type });
+                await NexusDB.put('files', { path: newPath, name: file.name, type: 'file', parent: path, owner: OS.state.user, data: file, mime: file.type });
             }
             
             OS.notify('Upload Complete', 'Files added successfully.', 'fas fa-check');
@@ -1252,11 +1229,11 @@
             if(!confirmed) return;
             try {
                 if(type === 'folder') {
-                    const allFiles = await EolasDB.getAll('files');
+                    const allFiles = await NexusDB.getAll('files');
                     const toDelete = allFiles.filter(f => f.path.startsWith(path + '/') || f.path === path);
-                    for(let f of toDelete) await EolasDB.delete('files', f.path);
+                    for(let f of toDelete) await NexusDB.delete('files', f.path);
                 } else {
-                    await EolasDB.delete('files', path);
+                    await NexusDB.delete('files', path);
                 }
                 if(winId && document.getElementById(`${winId}_address`)) {
                     this._expNav(winId, document.getElementById(`${winId}_address`).value);
@@ -1298,10 +1275,10 @@
         },
         async _saveTextFile(path, textAreaId) {
             const val = document.getElementById(textAreaId).value;
-            const file = await EolasDB.get('files', path);
+            const file = await NexusDB.get('files', path);
             if(file) {
                 file.data = new Blob([val], {type: 'text/plain'});
-                await EolasDB.put('files', file);
+                await NexusDB.put('files', file);
                 OS.notify('Saved', `Document saved successfully.`, 'fas fa-save');
             }
         },
@@ -1399,11 +1376,11 @@
                     <div id="${winId}_chat" class="flex-1 overflow-y-auto p-4 space-y-4">
                         <div class="flex items-start gap-3">
                             <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white shadow"><i class="fas fa-robot"></i></div>
-                            <div class="bg-gray-100 p-3 rounded-lg shadow-sm text-sm border border-gray-300 text-black">Hello! I am Eolas, powered by Gemini 2.5 Flash Lite. You can ask me anything or command me to open apps!</div>
+                            <div class="bg-gray-100 p-3 rounded-lg shadow-sm text-sm border border-gray-300 text-black">Hello! I am ${OS.state.aiName}, powered by Gemini 2.5 Flash Lite. You can ask me anything or command me to open apps!</div>
                         </div>
                     </div>
                     <div class="p-3 bg-gray-200 border-t border-gray-400 flex gap-2">
-                        <input type="text" id="${winId}_input" class="flex-1 border border-gray-400 bg-white text-black p-2 rounded-full outline-none focus:border-purple-500 px-4 text-sm" placeholder="Ask Eolas anything..." onkeydown="if(event.key==='Enter') OS.Apps._aiSend('${winId}')">
+                        <input type="text" id="${winId}_input" class="flex-1 border border-gray-400 bg-white text-black p-2 rounded-full outline-none focus:border-purple-500 px-4 text-sm" placeholder="Ask ${OS.state.aiName} anything..." onkeydown="if(event.key==='Enter') OS.Apps._aiSend('${winId}')">
                         <button class="bg-purple-600 hover:bg-purple-700 text-white rounded-full w-10 h-10 flex items-center justify-center shadow" onclick="OS.Apps._aiSend('${winId}')"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
@@ -1440,7 +1417,7 @@
 
             try {
                 if (typeof puter === 'undefined') throw new Error('Puter.js not loaded');
-                const flash_resp = await puter.ai.chat(text, {model: 'gemini-2.5-flash-lite', stream: true});
+                const flash_resp = await puter.ai.chat(`Keep your answer to two sentences. You are ${OS.state.aiName}. ${text}`, {model: 'gemini-2.5-flash-lite', stream: true});
                 replyElem.classList.remove('italic', 'text-gray-500'); replyElem.innerHTML = '';
                 
                 let fullText = '';
@@ -1510,7 +1487,7 @@
             
             canvas.toBlob(async (blob) => {
                  const name = `Photo_${Date.now()}.png`;
-                 await EolasDB.put('files', { path: `/Users/${OS.state.user}/Pictures/${name}`, name: name, type: 'file', parent: `/Users/${OS.state.user}/Pictures`, owner: OS.state.user, data: blob, mime: 'image/png' });
+                 await NexusDB.put('files', { path: `/Users/${OS.state.user}/Pictures/${name}`, name: name, type: 'file', parent: `/Users/${OS.state.user}/Pictures`, owner: OS.state.user, data: blob, mime: 'image/png' });
                  Utils.playAudio('camera'); OS.notify('Photo Saved', `Saved to Pictures folder.`, 'fas fa-camera');
             }, 'image/png');
         },
@@ -1523,7 +1500,7 @@
                 state.recorder.ondataavailable = e => { if(e.data.size > 0) state.chunks.push(e.data); };
                 state.recorder.onstop = async () => {
                     const blob = new Blob(state.chunks, { type: 'video/webm' }); const name = `Video_${Date.now()}.webm`;
-                    await EolasDB.put('files', { path: `/Users/${OS.state.user}/Videos/${name}`, name: name, type: 'file', parent: `/Users/${OS.state.user}/Videos`, owner: OS.state.user, data: blob, mime: 'video/webm' });
+                    await NexusDB.put('files', { path: `/Users/${OS.state.user}/Videos/${name}`, name: name, type: 'file', parent: `/Users/${OS.state.user}/Videos`, owner: OS.state.user, data: blob, mime: 'video/webm' });
                     OS.notify('Video Saved', `Saved to Videos folder.`, 'fas fa-video');
                 };
                 state.recorder.start(); state.isRecording = true;
@@ -1544,9 +1521,12 @@
                         <div class="font-bold mb-2 uppercase text-gray-500">Settings</div>
                         <button class="text-left px-2 py-1 bg-blue-100 rounded text-blue-800" onclick="OS.Apps._switchSettingsView('${winId}', 'wp')">Appearance</button>
                         <button class="text-left px-2 py-1 hover:bg-gray-200 rounded text-gray-800" onclick="OS.Apps._switchSettingsView('${winId}', 'account')">Account</button>
+                        <button class="text-left px-2 py-1 hover:bg-gray-200 rounded text-gray-800" onclick="OS.Apps._switchSettingsView('${winId}', 'ai')">AI Assistant</button>
                         <button class="text-left px-2 py-1 hover:bg-gray-200 rounded text-gray-800" onclick="OS.Apps._switchSettingsView('${winId}', 'apps'); OS.Apps._renderUninstallList('${winId}');">Manage Apps</button>
                     </div>
                     <div class="flex-1 p-6 overflow-y-auto relative">
+                        
+                        <!-- Appearance View -->
                         <div id="${winId}_v_wp" class="settings-view">
                             <h3 class="font-light text-2xl mb-4 border-b border-gray-300 pb-2">Appearance</h3>
                             <h4 class="font-bold mb-2">Desktop Background</h4>
@@ -1566,6 +1546,7 @@
                             </div>
                         </div>
 
+                        <!-- Account View -->
                         <div id="${winId}_v_account" class="settings-view" style="display:none;">
                             <h3 class="font-light text-2xl mb-4 border-b border-gray-300 pb-2">Account Settings</h3>
                             <div class="flex gap-6 items-start">
@@ -1583,6 +1564,21 @@
                             </div>
                         </div>
 
+                        <!-- AI Assistant View -->
+                        <div id="${winId}_v_ai" class="settings-view" style="display:none;">
+                            <h3 class="font-light text-2xl mb-4 border-b border-gray-300 pb-2">AI Assistant Settings</h3>
+                            <div class="mb-4">
+                                <label class="font-bold block mb-2 text-sm">AI Name:</label>
+                                <input type="text" id="${winId}_ai_name" class="border p-2 rounded w-full outline-none focus:border-blue-500" value="${OS.state.aiName}">
+                            </div>
+                            <div class="mb-6">
+                                <label class="font-bold block mb-2 text-sm">Orb Base Color:</label>
+                                <input type="color" id="${winId}_ai_color" value="${OS.state.aiColor}" class="w-16 h-10 p-1 border rounded cursor-pointer outline-none">
+                            </div>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm shadow" onclick="OS.Apps._saveAISettings('${winId}')">Save AI Settings</button>
+                        </div>
+
+                        <!-- Manage Apps View -->
                         <div id="${winId}_v_apps" class="settings-view" style="display:none;">
                             <h3 class="font-light text-2xl mb-4 border-b border-gray-300 pb-2">Uninstall Web Apps</h3>
                             <div id="${winId}_uninstall_list" class="flex flex-col gap-2"></div>
@@ -1593,7 +1589,7 @@
             return { 
                 width: 700, height: 500, html: html,
                 onLoad: async (win) => {
-                    const user = await EolasDB.get('users', OS.state.user);
+                    const user = await NexusDB.get('users', OS.state.user);
                     if(user && user.avatar) {
                         const avatarBox = document.getElementById(`${winId}_acc_avatar`);
                         avatarBox.innerHTML = ''; avatarBox.style.backgroundImage = `url('${user.avatar}')`;
@@ -1608,13 +1604,35 @@
             document.querySelectorAll(`#${winId} .settings-view`).forEach(v => v.style.display = 'none');
             document.getElementById(`${winId}_v_${view}`).style.display = 'block';
         },
+        async _saveAISettings(winId) {
+            const name = document.getElementById(`${winId}_ai_name`).value.trim() || 'Nexus';
+            const color = document.getElementById(`${winId}_ai_color`).value;
+            
+            let settings = await NexusDB.get('settings', OS.state.user);
+            settings.aiName = name;
+            settings.aiColor = color;
+            await NexusDB.put('settings', settings);
+            
+            OS.state.aiName = name;
+            OS.state.aiColor = color;
+            
+            OS.UI.applyAIColor(color);
+            OS.state.installedApps['aichat'].name = `${name} AI Chat`;
+            document.getElementById('ai-container').title = `${name} Voice AI (Click to Listen)`;
+            
+            // Rerender icons to update names
+            OS.UI.renderDesktopIcons(settings.desktopPins);
+            OS.UI.renderStartMenuApps();
+            
+            OS.notify('Settings Saved', 'AI preferences updated.', 'fas fa-check');
+        },
         async _changeAccountAvatar(input, winId) {
             const file = input.files[0]; if(!file) return; const reader = new FileReader();
             reader.onload = async (e) => {
                 const dataUrl = e.target.result;
                 const avatarBox = document.getElementById(`${winId}_acc_avatar`);
                 avatarBox.innerHTML = ''; avatarBox.style.backgroundImage = `url('${dataUrl}')`;
-                const user = await EolasDB.get('users', OS.state.user); user.avatar = dataUrl; await EolasDB.put('users', user);
+                const user = await NexusDB.get('users', OS.state.user); user.avatar = dataUrl; await NexusDB.put('users', user);
                 document.getElementById('start-avatar').innerHTML = ''; document.getElementById('start-avatar').style.backgroundImage = `url('${dataUrl}')`;
                 OS.notify('Settings Saved', 'Avatar updated successfully.', 'fas fa-check');
             }; reader.readAsDataURL(file);
@@ -1623,20 +1641,20 @@
             const pass = document.getElementById(`${winId}_acc_pass`).value; 
             if(!pass) { await OS.UI.showModal({type: 'alert', title: 'Error', text: 'Enter a new password.'}); return; }
             
-            const hash = await Utils.hashPassword(pass); const user = await EolasDB.get('users', OS.state.user);
-            user.hash = hash; await EolasDB.put('users', user);
+            const hash = await Utils.hashPassword(pass); const user = await NexusDB.get('users', OS.state.user);
+            user.hash = hash; await NexusDB.put('users', user);
             document.getElementById(`${winId}_acc_pass`).value = ''; OS.notify('Settings Saved', 'Password updated successfully.', 'fas fa-check');
         },
         async _changeWallpaper(url) {
             document.getElementById('desktop').style.backgroundImage = `url('${url}')`;
-            let settings = await EolasDB.get('settings', OS.state.user); settings.wallpaper = url; await EolasDB.put('settings', settings);
+            let settings = await NexusDB.get('settings', OS.state.user); settings.wallpaper = url; await NexusDB.put('settings', settings);
         },
         _uploadWallpaper(inputElem) {
             const file = inputElem.files[0]; if(!file) return; const reader = new FileReader();
             reader.onload = (e) => { OS.Apps._changeWallpaper(e.target.result); }; reader.readAsDataURL(file); 
         },
         async _renderUninstallList(winId) {
-            const list = document.getElementById(`${winId}_uninstall_list`); const customApps = await EolasDB.getAll('apps');
+            const list = document.getElementById(`${winId}_uninstall_list`); const customApps = await NexusDB.getAll('apps');
             const userApps = customApps.filter(app => app.owner === OS.state.user);
             
             list.innerHTML = userApps.length ? '' : '<p class="text-gray-500 text-sm">No custom web apps installed.</p>';
@@ -1652,12 +1670,12 @@
             const conf = await OS.UI.showModal({type: 'confirm', title: 'Uninstall', text: 'Uninstall this application?'});
             if(!conf) return;
             
-            await EolasDB.delete('apps', appId);
-            let settings = await EolasDB.get('settings', OS.state.user);
+            await NexusDB.delete('apps', appId);
+            let settings = await NexusDB.get('settings', OS.state.user);
             settings.desktopPins = settings.desktopPins.filter(id => id !== appId);
             settings.pinnedTaskbar = settings.pinnedTaskbar.filter(id => id !== appId);
             if(settings.desktopIconPositions && settings.desktopIconPositions[appId]) delete settings.desktopIconPositions[appId];
-            await EolasDB.put('settings', settings);
+            await NexusDB.put('settings', settings);
             delete OS.state.installedApps[appId];
             OS.UI.renderDesktopIcons(settings.desktopPins); OS.UI.renderTaskbarPins(settings.pinnedTaskbar); OS.UI.renderStartMenuApps(); OS.WM.updateTaskbar();
             OS.notify('App Removed', 'Application has been successfully uninstalled.', 'fas fa-trash');
@@ -1705,11 +1723,11 @@
             const iconToUse = OS.Apps.pendingInstallerIcon || 'fas fa-window-maximize';
             
             const appData = { id: appId, name, url, icon: iconToUse, type: 'iframe', system: false, owner: OS.state.user };
-            await EolasDB.put('apps', appData);
+            await NexusDB.put('apps', appData);
             
-            const settings = await EolasDB.get('settings', OS.state.user);
+            const settings = await NexusDB.get('settings', OS.state.user);
             if(!settings.desktopPins.includes(appId)) settings.desktopPins.push(appId);
-            await EolasDB.put('settings', settings);
+            await NexusDB.put('settings', settings);
 
             OS.state.installedApps[appId] = appData;
             OS.UI.renderDesktopIcons(settings.desktopPins); OS.UI.renderStartMenuApps();
@@ -1752,10 +1770,10 @@
              this.speak("Thinking...");
              try {
                   if (typeof puter === 'undefined') throw new Error('Puter.js not loaded');
-                  const resp = await puter.ai.chat(`Keep your answer to two sentences. ${text}`, {model: 'gemini-2.5-flash-lite'});
+                  const resp = await puter.ai.chat(`Keep your answer to two sentences. You are ${OS.state.aiName}. ${text}`, {model: 'gemini-2.5-flash-lite'});
                   let msg = typeof resp === 'string' ? resp : (resp.text || resp.message?.content || "I have an answer, but I can't read it out loud.");
                   msg = msg.replace(/\*/g, '').replace(/#/g, '');
-                  this.speak(msg.substring(0, 250)); OS.notify('Eolas AI', msg, 'fas fa-robot');
+                  this.speak(msg.substring(0, 250)); OS.notify(`${OS.state.aiName} AI`, msg, 'fas fa-robot');
              } catch(e) { this.speak("I'm sorry, I couldn't reach the AI server right now."); }
         }
     };
