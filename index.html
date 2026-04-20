@@ -158,17 +158,18 @@
         .login-submit-btn { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: #0078d7; border-radius: 4px; border: 1px solid #005a9e; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; }
         .login-submit-btn:hover { background: #005a9e; }
 
-        /* === 3D AI SPHERE (Dynamic Custom Colors) === */
-        #ai-container { position: absolute; bottom: 60px; right: 20px; width: 120px; height: 120px; z-index: 500; cursor: pointer; perspective: 800px; display: none; }
-        .ai-sphere { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: floatSphere 4s ease-in-out infinite; }
-        .ai-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid rgba(var(--ai-color-rgb), 0.6); box-shadow: 0 0 15px rgba(var(--ai-color-rgb), 0.8), inset 0 0 15px rgba(var(--ai-color-rgb), 0.8); transition: border-color 0.3s, box-shadow 0.3s;}
+        /* === 3D AI SPHERE (Fixed Clipping) === */
+        #ai-container { position: absolute; bottom: 60px; right: 20px; width: 160px; height: 160px; z-index: 500; cursor: pointer; display: none; }
+        .ai-sphere { width: 100px; height: 100px; position: absolute; left: 50%; top: 50%; margin-left: -50px; margin-top: -50px; transform-style: preserve-3d; animation: floatSphere 4s ease-in-out infinite; pointer-events: none;}
+        .ai-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid rgba(var(--ai-color-rgb), 0.6); box-shadow: inset 0 0 15px rgba(var(--ai-color-rgb), 0.8); transition: border-color 0.3s, box-shadow 0.3s;}
         .ring1 { animation: spin1 4s linear infinite; }
         .ring2 { animation: spin2 5s linear infinite; }
         .ring3 { animation: spin3 6s linear infinite; }
-        .ai-core { position: absolute; top: 25%; left: 25%; width: 50%; height: 50%; background: radial-gradient(circle, #fff, var(--ai-color)); border-radius: 50%; box-shadow: 0 0 30px var(--ai-color); animation: pulseCore 2s infinite alternate; transition: background 0.3s, box-shadow 0.3s;}
         
-        .ai-listening .ai-ring { border-color: rgba(255, 0, 255, 0.8); box-shadow: 0 0 20px rgba(255, 0, 255, 0.9); }
-        .ai-listening .ai-core { background: radial-gradient(circle, #fff, #ff00ff); box-shadow: 0 0 40px #ff00ff; animation: pulseCoreFast 0.5s infinite alternate; }
+        .ai-core { position: absolute; left: 50%; top: 50%; width: 50px; height: 50px; margin-left: -25px; margin-top: -25px; background: radial-gradient(circle, #fff, var(--ai-color)); border-radius: 50%; box-shadow: 0 0 40px 10px var(--ai-color); animation: pulseCore 2s infinite alternate, floatSphere 4s ease-in-out infinite; transition: background 0.3s, box-shadow 0.3s; pointer-events: none;}
+        
+        .ai-listening .ai-ring { border-color: rgba(255, 0, 255, 0.8); box-shadow: inset 0 0 20px rgba(255, 0, 255, 0.9); }
+        .ai-listening .ai-core { background: radial-gradient(circle, #fff, #ff00ff); box-shadow: 0 0 50px 15px #ff00ff; animation: pulseCoreFast 0.5s infinite alternate, floatSphere 4s ease-in-out infinite; }
 
         @keyframes floatSphere { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         @keyframes spin1 { 0% { transform: rotateX(60deg) rotateY(0deg) rotateZ(0deg); } 100% { transform: rotateX(60deg) rotateY(360deg) rotateZ(360deg); } }
@@ -288,11 +289,11 @@
 
         <!-- AI Sphere -->
         <div id="ai-container" onclick="OS.AI.toggleListen()">
+            <div class="ai-core"></div>
             <div class="ai-sphere">
                 <div class="ai-ring ring1"></div>
                 <div class="ai-ring ring2"></div>
                 <div class="ai-ring ring3"></div>
-                <div class="ai-core"></div>
             </div>
         </div>
 
@@ -306,6 +307,7 @@
             </div>
             <div id="system-tray">
                 <i class="fas fa-chevron-up text-gray-400 cursor-pointer hover:text-white"></i>
+                <i class="fas fa-circle cursor-pointer hover:scale-110 transition-transform" style="color: var(--ai-color);" onclick="OS.UI.toggleOrb()" title="Toggle AI Orb"></i>
                 <i class="fas fa-volume-up cursor-pointer hover:text-white"></i>
                 <i class="fas fa-network-wired cursor-pointer hover:text-white"></i>
                 <div id="sys-clock" class="text-right cursor-default select-none">
@@ -438,7 +440,7 @@
         registry: { 
             'explorer': { id: 'explorer', name: 'File Explorer', icon: 'fas fa-folder-open', color: '#ffb300', system: true, handler: 'renderExplorer' },
             'browser': { id: 'browser', name: 'Web Browser', icon: 'fab fa-chrome', color: '#4285f4', system: true, handler: 'renderBrowser' },
-            'aichat': { id: 'aichat', name: 'Nexus AI Chat', icon: 'fas fa-comment-dots', color: '#9c27b0', system: true, handler: 'renderAIChat' },
+            'aichat': { id: 'aichat', name: 'Nexus AI Chat', icon: 'fas fa-circle', color: 'var(--ai-color)', system: true, handler: 'renderAIChat' },
             'settings': { id: 'settings', name: 'Control Panel', icon: 'fas fa-cog', color: '#607d8b', system: true, handler: 'renderSettings' },
             'camera': { id: 'camera', name: 'Camera', icon: 'fas fa-camera', color: '#333', system: true, handler: 'renderCamera' },
             'screenrec': { id: 'screenrec', name: 'Screen Recorder', icon: 'fas fa-record-vinyl', color: '#ff5722', system: true, handler: 'renderScreenRecorder' },
@@ -511,7 +513,8 @@
                 desktopPins: ['explorer', 'browser', 'aichat', 'videoplayer', 'widevideo', 'pixabay', 'ytmusic', 'canva', 'screenrec', 'installer'],
                 desktopIconPositions: {},
                 aiName: 'Nexus',
-                aiColor: '#00ff00'
+                aiColor: '#00ff00',
+                showOrb: true
             });
 
             await OS.UI.showModal({type: 'alert', title: 'Success', text: 'Account created. Please log in.'});
@@ -552,7 +555,7 @@
             }
             
             document.getElementById('taskbar').style.display = 'flex'; 
-            Utils.playAudio('startup'); await OS.UI.loadDesktop(); document.getElementById('ai-container').style.display = 'block';
+            Utils.playAudio('startup'); await OS.UI.loadDesktop();
         },
         logout() {
             localStorage.removeItem('nexus_session'); OS.state.user = null;
@@ -649,6 +652,18 @@
             }
         },
 
+        async toggleOrb() {
+            const container = document.getElementById('ai-container');
+            const isHidden = container.style.display === 'none';
+            container.style.display = isHidden ? 'flex' : 'none';
+            
+            let settings = await NexusDB.get('settings', OS.state.user);
+            if(settings) {
+                settings.showOrb = isHidden;
+                await NexusDB.put('settings', settings);
+            }
+        },
+
         async loadDesktop() {
             document.getElementById('start-username').innerText = OS.state.user;
             let settings = await NexusDB.get('settings', OS.state.user);
@@ -658,6 +673,12 @@
                 OS.state.aiColor = settings.aiColor || '#00ff00';
                 this.applyAIColor(OS.state.aiColor);
                 document.getElementById('ai-container').title = `${OS.state.aiName} Voice AI (Click to Listen)`;
+                
+                if(settings.showOrb !== false) {
+                    document.getElementById('ai-container').style.display = 'flex';
+                } else {
+                    document.getElementById('ai-container').style.display = 'none';
+                }
             }
             
             const customApps = await NexusDB.getAll('apps');
@@ -1371,8 +1392,8 @@
                 <div class="flex flex-col h-full bg-white">
                     <div id="${winId}_chat" class="flex-1 overflow-y-auto p-4 space-y-4">
                         <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-white shadow" style="background-color: var(--ai-color);"><i class="fas fa-robot text-black"></i></div>
-                            <div class="bg-gray-100 p-3 rounded-lg shadow-sm text-sm border border-gray-300 text-black">Hello! I am ${OS.state.aiName}. You can ask me anything or command me to open apps!</div>
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-white shadow" style="background: radial-gradient(circle at 30% 30%, #fff, var(--ai-color));"></div>
+                            <div class="bg-gray-100 p-3 rounded-lg shadow-sm text-sm border border-gray-300 text-black">Hello! I am ${OS.state.aiName}, powered by Gemini 2.5 Flash Lite. You can ask me anything or command me to open apps!</div>
                         </div>
                     </div>
                     <div class="p-3 bg-gray-200 border-t border-gray-400 flex gap-2">
@@ -1404,7 +1425,7 @@
             const replyId = 'reply_' + Utils.generateId();
             chatBox.innerHTML += `
                 <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white shadow" style="background-color: var(--ai-color);"><i class="fas fa-robot text-black"></i></div>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white shadow" style="background: radial-gradient(circle at 30% 30%, #fff, var(--ai-color));"></div>
                     <div id="${replyId}" class="bg-gray-100 p-3 rounded-lg shadow-sm text-sm border border-gray-300 text-black min-w-[50px] min-h-[40px] italic text-gray-500">Thinking...</div>
                 </div>
             `;
@@ -1434,7 +1455,7 @@
             const chatBox = document.getElementById(`${winId}_chat`);
             chatBox.innerHTML += `
                 <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white shadow" style="background-color: var(--ai-color);"><i class="fas fa-robot text-black"></i></div>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white shadow" style="background: radial-gradient(circle at 30% 30%, #fff, var(--ai-color));"></div>
                     <div class="bg-gray-100 p-3 rounded-lg shadow-sm text-sm border border-gray-300 text-black">${text.replace(/\n/g, '<br>')}</div>
                 </div>
             `;
@@ -1487,7 +1508,7 @@
 
             try {
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-                    await OS.UI.showModal({type: 'alert', title: 'Not Supported', text: 'Screen recording is not supported in this browser.'});
+                    await OS.UI.showModal({type: 'alert', title: 'Not Supported', text: 'Screen recording is not supported in this browser environment.'});
                     return;
                 }
                 const displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }).catch(async (err) => {
@@ -1568,74 +1589,6 @@
         _stopScreenRecordForce(winId) {
             const state = OS.Apps.screenRecStates && OS.Apps.screenRecStates[winId];
             if(state && state.isRecording) state.recorder.stop();
-        },
-
-        // 📷 CAMERA APP
-        cameraStates: {},
-        renderCamera(winId) {
-            OS.Apps.cameraStates[winId] = { stream: null, recorder: null, chunks: [], isRecording: false };
-            const html = `
-                <div class="camera-container">
-                    <div id="${winId}_rec_indicator" class="absolute top-4 left-4 bg-red-600 text-white px-2 py-1 rounded text-xs font-bold animate-pulse hidden z-20"><i class="fas fa-circle mr-1"></i>REC</div>
-                    <video id="${winId}_vid" class="camera-video" autoplay playsinline muted></video>
-                    <div class="camera-controls">
-                        <button class="w-12 h-12 rounded-full bg-white border-4 border-gray-400 hover:bg-gray-200 transition shadow-lg" onclick="OS.Apps._camPhoto('${winId}')" title="Take Photo"></button>
-                        <button id="${winId}_btn_rec" class="w-12 h-12 rounded-full bg-red-600 border-4 border-gray-400 hover:bg-red-700 transition shadow-lg flex items-center justify-center" onclick="OS.Apps._camRecord('${winId}')" title="Start/Stop Recording"><i class="fas fa-video text-white text-sm"></i></button>
-                    </div>
-                    <canvas id="${winId}_canvas" style="display:none;"></canvas>
-                </div>
-            `;
-            return {
-                width: 650, height: 500, html: html,
-                onLoad: (win) => {
-                    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                        .then(stream => {
-                            OS.Apps.cameraStates[winId].stream = stream;
-                            const vid = document.getElementById(`${winId}_vid`); vid.srcObject = stream;
-                            const observer = new MutationObserver((mutations) => {
-                                if(!document.contains(win)) {
-                                    stream.getTracks().forEach(t => t.stop());
-                                    if(OS.Apps.cameraStates[winId].recorder?.state === "recording") OS.Apps.cameraStates[winId].recorder.stop();
-                                    observer.disconnect();
-                                }
-                            });
-                            observer.observe(document.body, {childList: true, subtree: true});
-                        }).catch(err => { document.getElementById(`${winId}_vid`).outerHTML = `<div class="flex-1 flex items-center justify-center text-white text-center p-4">Camera/Mic access denied.<br>${err.message}</div>`; });
-                }
-            };
-        },
-        async _camPhoto(winId) {
-            const vid = document.getElementById(`${winId}_vid`); const canvas = document.getElementById(`${winId}_canvas`);
-            if(!vid.srcObject) return;
-            canvas.width = vid.videoWidth; canvas.height = vid.videoHeight;
-            canvas.getContext('2d').drawImage(vid, 0, 0);
-            
-            canvas.toBlob(async (blob) => {
-                 const name = `Photo_${Date.now()}.png`;
-                 await NexusDB.put('files', { path: `/Users/${OS.state.user}/Pictures/${name}`, name: name, type: 'file', parent: `/Users/${OS.state.user}/Pictures`, owner: OS.state.user, data: blob, mime: 'image/png' });
-                 Utils.playAudio('camera'); OS.notify('Photo Saved', `Saved to Pictures folder.`, 'fas fa-camera');
-            }, 'image/png');
-        },
-        _camRecord(winId) {
-            const state = OS.Apps.cameraStates[winId]; if(!state.stream) return;
-            const btn = document.getElementById(`${winId}_btn_rec`); const indicator = document.getElementById(`${winId}_rec_indicator`);
-
-            if(!state.isRecording) {
-                state.chunks = []; state.recorder = new MediaRecorder(state.stream, { mimeType: 'video/webm' });
-                state.recorder.ondataavailable = e => { if(e.data.size > 0) state.chunks.push(e.data); };
-                state.recorder.onstop = async () => {
-                    const blob = new Blob(state.chunks, { type: 'video/webm' }); const name = `Video_${Date.now()}.webm`;
-                    await NexusDB.put('files', { path: `/Users/${OS.state.user}/Videos/${name}`, name: name, type: 'file', parent: `/Users/${OS.state.user}/Videos`, owner: OS.state.user, data: blob, mime: 'video/webm' });
-                    OS.notify('Video Saved', `Saved to Videos folder.`, 'fas fa-video');
-                };
-                state.recorder.start(); state.isRecording = true;
-                btn.classList.replace('bg-red-600', 'bg-gray-800'); btn.innerHTML = '<i class="fas fa-square text-red-500"></i>';
-                indicator.classList.remove('hidden'); Utils.playAudio('startup');
-            } else {
-                state.recorder.stop(); state.isRecording = false;
-                btn.classList.replace('bg-gray-800', 'bg-red-600'); btn.innerHTML = '<i class="fas fa-video text-white text-sm"></i>';
-                indicator.classList.add('hidden');
-            }
         },
 
         // ⚙️ SETTINGS & INSTALLER
