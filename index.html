@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nexus OS</title>
+    <link rel="icon" type="image/x-icon" href="https://www.rw-designer.com/icon-image/18758-256x256x32.png">
     <!-- Suppress Tailwind Production Warning -->
     <script>
         const originalWarn = console.warn;
@@ -15,8 +16,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Using puter.js from your ai.html file for Gemini 2.5 Flash Lite -->
-    <script src="https://js.puter.com/v2/"></script>
+    <!-- UncloseAI Integration -->
+    <script>
+        // Hide the floating button since Nexus OS has its own chat UI and voice orb
+        window.UNCLOSEAI_FLOATING_BUTTON = false;
+    </script>
+    <script src="https://uncloseai.com/uncloseai.js" type="module"></script>
     
     <style>
         /* === CORE OS VARIABLES & RESET === */
@@ -157,18 +162,17 @@
         .login-submit-btn { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: #0078d7; border-radius: 4px; border: 1px solid #005a9e; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; }
         .login-submit-btn:hover { background: #005a9e; }
 
-        /* === 3D AI SPHERE === */
-        #ai-container { position: absolute; bottom: 60px; right: 20px; width: 120px; height: 120px; z-index: 500; cursor: pointer; display: none; }
-        .ai-sphere { width: 100px; height: 100px; position: absolute; left: 50%; top: 50%; margin-left: -50px; margin-top: -50px; transform-style: preserve-3d; animation: floatSphere 4s ease-in-out infinite; pointer-events: none;}
-        .ai-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid rgba(var(--ai-color-rgb), 0.6); box-shadow: inset 0 0 15px rgba(var(--ai-color-rgb), 0.8); transition: border-color 0.3s, box-shadow 0.3s;}
+        /* === 3D AI SPHERE (Dynamic Custom Colors) === */
+        #ai-container { position: absolute; bottom: 60px; right: 20px; width: 120px; height: 120px; z-index: 500; cursor: pointer; perspective: 800px; display: none; }
+        .ai-sphere { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: floatSphere 4s ease-in-out infinite; }
+        .ai-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid rgba(var(--ai-color-rgb), 0.6); box-shadow: 0 0 15px rgba(var(--ai-color-rgb), 0.8), inset 0 0 15px rgba(var(--ai-color-rgb), 0.8); transition: border-color 0.3s, box-shadow 0.3s;}
         .ring1 { animation: spin1 4s linear infinite; }
         .ring2 { animation: spin2 5s linear infinite; }
         .ring3 { animation: spin3 6s linear infinite; }
+        .ai-core { position: absolute; top: 25%; left: 25%; width: 50%; height: 50%; background: radial-gradient(circle, #fff, var(--ai-color)); border-radius: 50%; box-shadow: 0 0 30px var(--ai-color); animation: pulseCore 2s infinite alternate; transition: background 0.3s, box-shadow 0.3s;}
         
-        .ai-core { position: absolute; left: 50%; top: 50%; width: 50px; height: 50px; margin-left: -25px; margin-top: -25px; background: radial-gradient(circle, #fff, var(--ai-color)); border-radius: 50%; box-shadow: 0 0 40px 10px var(--ai-color); animation: pulseCore 2s infinite alternate, floatSphere 4s ease-in-out infinite; transition: background 0.3s, box-shadow 0.3s; pointer-events: none;}
-        
-        .ai-listening .ai-ring { border-color: rgba(255, 0, 255, 0.8); box-shadow: inset 0 0 20px rgba(255, 0, 255, 0.9); }
-        .ai-listening .ai-core { background: radial-gradient(circle, #fff, #ff00ff); box-shadow: 0 0 50px 15px #ff00ff; animation: pulseCoreFast 0.5s infinite alternate, floatSphere 4s ease-in-out infinite; }
+        .ai-listening .ai-ring { border-color: rgba(255, 0, 255, 0.8); box-shadow: 0 0 20px rgba(255, 0, 255, 0.9); }
+        .ai-listening .ai-core { background: radial-gradient(circle, #fff, #ff00ff); box-shadow: 0 0 40px #ff00ff; animation: pulseCoreFast 0.5s infinite alternate; }
 
         @keyframes floatSphere { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         @keyframes spin1 { 0% { transform: rotateX(60deg) rotateY(0deg) rotateZ(0deg); } 100% { transform: rotateX(60deg) rotateY(360deg) rotateZ(360deg); } }
@@ -215,7 +219,7 @@
 
     <!-- SYSTEM MODAL OVERLAY -->
     <div id="os-modal-overlay" class="absolute top-0 left-0 w-full h-full bg-black/40 hidden flex items-center justify-center" style="z-index: 12000;">
-        <div class="aero-window !relative" style="min-width: 350px; max-width: 450px; min-height: 160px; box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.6);">
+        <div class="aero-window !relative" style="min-width: 350px; min-height: 160px; box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.6);">
             <div class="aero-titlebar">
                 <div class="flex items-center text-sm font-semibold text-gray-800" style="text-shadow: 0 0 5px rgba(255,255,255,0.8);" id="os-modal-title">Message</div>
                 <div class="window-controls">
@@ -570,7 +574,7 @@
             }
             
             document.getElementById('taskbar').style.display = 'flex'; 
-            Utils.playAudio('startup'); await OS.UI.loadDesktop();
+            Utils.playAudio('startup'); await OS.UI.loadDesktop(); document.getElementById('ai-container').style.display = 'block';
         },
         logout() {
             localStorage.removeItem('nexus_session'); OS.state.user = null;
@@ -1459,17 +1463,28 @@
             const replyElem = document.getElementById(replyId);
 
             try {
-                if (typeof puter === 'undefined') throw new Error('Puter.js not loaded');
-                const flash_resp = await puter.ai.chat(`Keep your answer to two sentences. You are ${OS.state.aiName}. ${text}`, {model: 'gemini-2.5-flash-lite', stream: true});
-                replyElem.classList.remove('italic', 'text-gray-500'); replyElem.innerHTML = '';
+                let retries = 20;
+                while (!window.uncloseai && retries > 0) {
+                    await new Promise(resolve => setTimeout(resolve, 250));
+                    retries--;
+                }
+                
+                if (!window.uncloseai) {
+                    replyElem.classList.remove('italic', 'text-gray-500'); 
+                    replyElem.innerHTML = "AI system is still initializing or blocked by the browser. Please wait or disable tracking protection.";
+                    return;
+                }
+                
+                const prompt = `Keep your answer to two sentences. You are ${OS.state.aiName}. ${text}`;
+                replyElem.classList.remove('italic', 'text-gray-500'); 
+                replyElem.innerHTML = '';
                 
                 let fullText = '';
-                for await (const part of flash_resp) {
-                    if (part?.text) {
-                        fullText += part.text;
-                        replyElem.innerHTML = Utils.escapeHTML(fullText).replaceAll('\n', '<br>');
-                        chatBox.scrollTop = chatBox.scrollHeight;
-                    }
+                // Stream chunks directly from uncloseai
+                for await (const chunk of window.uncloseai.sendMessage(prompt)) {
+                    fullText += chunk;
+                    replyElem.innerHTML = Utils.escapeHTML(fullText).replaceAll('\n', '<br>');
+                    chatBox.scrollTop = chatBox.scrollHeight;
                 }
             } catch(e) {
                 console.error(e);
@@ -1683,11 +1698,11 @@
                             <h3 class="font-light text-2xl mb-4 border-b border-gray-300 pb-2">AI Assistant Settings</h3>
                             <div class="mb-4">
                                 <label class="font-bold block mb-2 text-sm">AI Name:</label>
-                                <input type="text" id="${winId}_ai_name" class="border border-gray-300 p-2 rounded w-full outline-none focus:border-blue-500" value="${OS.state.aiName}">
+                                <input type="text" id="${winId}_ai_name" class="border p-2 rounded w-full outline-none focus:border-blue-500" value="${OS.state.aiName}">
                             </div>
                             <div class="mb-6">
                                 <label class="font-bold block mb-2 text-sm">Orb Base Color:</label>
-                                <input type="color" id="${winId}_ai_color" value="${OS.state.aiColor}" class="w-16 h-10 p-1 border border-gray-300 rounded cursor-pointer outline-none">
+                                <input type="color" id="${winId}_ai_color" value="${OS.state.aiColor}" class="w-16 h-10 p-1 border rounded cursor-pointer outline-none">
                             </div>
                             <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm shadow" onclick="OS.Apps._saveAISettings('${winId}')">Save AI Settings</button>
                         </div>
@@ -1784,11 +1799,9 @@
             const color = document.getElementById(`${winId}_ai_color`).value;
             
             let settings = await NexusDB.get('settings', OS.state.user);
-            settings.aiName = name; settings.aiColor = color; 
-            await NexusDB.put('settings', settings);
+            settings.aiName = name; settings.aiColor = color; await NexusDB.put('settings', settings);
             
-            OS.state.aiName = name; OS.state.aiColor = color; 
-            OS.UI.applyAIColor(color);
+            OS.state.aiName = name; OS.state.aiColor = color; OS.UI.applyAIColor(color);
             OS.state.installedApps['aichat'].name = `${name} AI Chat`;
             document.getElementById('ai-container').title = `${name} Voice AI (Click to Listen)`;
             
@@ -1938,17 +1951,34 @@
             else if (lower.includes('explorer')) { OS.WM.openApp('explorer'); this.speak("Opening files."); }
             else if (lower.includes('settings')) { OS.WM.openApp('settings'); this.speak("Opening settings."); }
             else if (lower.includes('shut down') || lower.includes('log out')) { this.speak("Logging off."); setTimeout(() => OS.Auth.logout(), 1000); }
-            else { this.queryPuter(text); }
+            else { this.queryAI(text); }
         },
-        async queryPuter(text) {
+        async queryAI(text) {
              this.speak("Thinking...");
              try {
-                  if (typeof puter === 'undefined') throw new Error('Puter.js not loaded');
-                  const resp = await puter.ai.chat(`Keep your answer to two sentences. You are ${OS.state.aiName}. ${text}`, {model: 'gemini-2.5-flash-lite'});
-                  let msg = typeof resp === 'string' ? resp : (resp.text || resp.message?.content || "I have an answer, but I can't read it out loud.");
+                  let retries = 20;
+                  while (!window.uncloseai && retries > 0) {
+                      await new Promise(r => setTimeout(r, 250));
+                      retries--;
+                  }
+                  
+                  if (!window.uncloseai) {
+                      this.speak("I am still initializing or my connection is blocked. Please wait.");
+                      return;
+                  }
+                  
+                  let fullText = '';
+                  const prompt = `Keep your answer to two sentences. You are ${OS.state.aiName}. ${text}`;
+                  for await (const chunk of window.uncloseai.sendMessage(prompt)) {
+                      fullText += chunk;
+                  }
+                  let msg = fullText || "I have an answer, but I can't read it out loud.";
                   msg = msg.replace(/\*/g, '').replace(/#/g, '');
                   this.speak(msg.substring(0, 250)); OS.notify(`${OS.state.aiName} AI`, msg, 'fas fa-robot');
-             } catch(e) { this.speak("I'm sorry, I couldn't reach the AI server right now."); }
+             } catch(e) { 
+                  console.error(e);
+                  this.speak("I'm sorry, I couldn't reach the AI server right now."); 
+             }
         }
     };
 
