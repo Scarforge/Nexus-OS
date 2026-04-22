@@ -16,6 +16,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Custom uncloseai.js Integration -->
+    <script>
+        // Disable the default floating button so it doesn't overlap our OS UI
+        window.UNCLOSEAI_FLOATING_BUTTON = false;
+        window.UNCLOSEAI_CUSTOM_STYLING = false;
+    </script>
     <script src="https://uncloseai.com/uncloseai.js" type="module"></script>
     
     <style>
@@ -158,7 +163,7 @@
         .login-submit-btn:hover { background: #005a9e; }
 
         /* === 3D AI SPHERE === */
-        #ai-container { position: absolute; bottom: 60px; right: 20px; width: 120px; height: 120px; z-index: 500; cursor: pointer; display: none; }
+        #ai-container { position: absolute; bottom: 60px; right: 20px; width: 160px; height: 160px; z-index: 500; cursor: pointer; display: none; }
         .ai-sphere { width: 100px; height: 100px; position: absolute; left: 50%; top: 50%; margin-left: -50px; margin-top: -50px; transform-style: preserve-3d; animation: floatSphere 4s ease-in-out infinite; pointer-events: none;}
         .ai-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid rgba(var(--ai-color-rgb), 0.6); box-shadow: inset 0 0 15px rgba(var(--ai-color-rgb), 0.8); transition: border-color 0.3s, box-shadow 0.3s;}
         .ring1 { animation: spin1 4s linear infinite; }
@@ -1459,18 +1464,21 @@
             const replyElem = document.getElementById(replyId);
 
             try {
-                if (typeof uncloseai === 'undefined') throw new Error('uncloseai.js not loaded');
+                if (!window.uncloseai) throw new Error('uncloseai.js not loaded yet');
                 
-                // Generic call to uncloseai. Adjust if your specific uncloseai.js library expects different parameters (e.g. uncloseai.generate, etc).
-                const resp = await uncloseai.chat(text);
+                const stream = await window.uncloseai.sendMessage(`Keep your answer to two sentences. You are ${OS.state.aiName}. ${text}`);
                 
                 replyElem.classList.remove('italic', 'text-gray-500'); 
                 replyElem.innerHTML = '';
                 
-                let msg = typeof resp === 'string' ? resp : (resp.text || resp.message?.content || resp.response || "No response received.");
-                replyElem.innerHTML = Utils.escapeHTML(msg).replaceAll('\n', '<br>');
-                chatBox.scrollTop = chatBox.scrollHeight;
-                
+                let fullText = '';
+                for await (const chunk of stream) {
+                    if (chunk) {
+                        fullText += chunk;
+                        replyElem.innerHTML = Utils.escapeHTML(fullText).replaceAll('\n', '<br>');
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                }
             } catch(e) {
                 console.error(e);
                 replyElem.classList.remove('italic', 'text-gray-500');
@@ -1943,9 +1951,12 @@
         async queryUncloseAI(text) {
              this.speak("Thinking...");
              try {
-                  if (typeof uncloseai === 'undefined') throw new Error('uncloseai.js not loaded');
-                  const resp = await uncloseai.chat(`Keep your answer to two sentences. You are ${OS.state.aiName}. ${text}`);
-                  let msg = typeof resp === 'string' ? resp : (resp.text || resp.message?.content || resp.response || "I have an answer, but I can't read it out loud.");
+                  if (!window.uncloseai) throw new Error('uncloseai.js not loaded');
+                  const stream = await window.uncloseai.sendMessage(`Keep your answer to two sentences. You are ${OS.state.aiName}. ${text}`);
+                  let msg = '';
+                  for await (const chunk of stream) {
+                      if (chunk) msg += chunk;
+                  }
                   msg = msg.replace(/\*/g, '').replace(/#/g, '');
                   this.speak(msg.substring(0, 250)); OS.notify(`${OS.state.aiName} AI`, msg, 'fas fa-robot');
              } catch(e) { this.speak("I'm sorry, I couldn't reach the AI server right now."); }
