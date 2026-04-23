@@ -451,7 +451,7 @@
 
     // --- 3. SYSTEM STATE & CONFIG ---
     const OS = {
-        state: { user: null, windows: [], zIndex: 100, installedApps: [], aiName: 'Nexus', aiColor: '#00ff00' },
+        state: { user: null, windows: [], zIndex: 100, installedApps: [], aiName: 'Nexus', aiColor: '#00ff00', aiVoice: '' },
         registry: { 
             'explorer': { id: 'explorer', name: 'File Explorer', icon: 'fas fa-folder-open', color: '#ffb300', system: true, handler: 'renderExplorer' },
             'browser': { id: 'browser', name: 'Web Browser', icon: 'fab fa-chrome', color: '#4285f4', system: true, handler: 'renderBrowser' },
@@ -529,6 +529,7 @@
                 desktopIconPositions: {},
                 aiName: 'Nexus',
                 aiColor: '#00ff00',
+                aiVoice: '',
                 showOrb: true
             });
 
@@ -697,6 +698,7 @@
                 if(settings.wallpaper) document.getElementById('desktop').style.backgroundImage = `url('${settings.wallpaper}')`;
                 OS.state.aiName = settings.aiName || 'Nexus';
                 OS.state.aiColor = settings.aiColor || '#00ff00';
+                OS.state.aiVoice = settings.aiVoice || '';
                 this.applyAIColor(OS.state.aiColor);
                 document.getElementById('ai-container').title = `${OS.state.aiName} Voice AI (Click to Listen)`;
                 
@@ -1685,11 +1687,29 @@
                                 <label class="font-bold block mb-2 text-sm">AI Name:</label>
                                 <input type="text" id="${winId}_ai_name" class="border p-2 rounded w-full outline-none focus:border-blue-500" value="${OS.state.aiName}">
                             </div>
+                            <div class="mb-4">
+                                <label class="font-bold block mb-2 text-sm">AI Voice:</label>
+                                <select id="${winId}_ai_voice" class="border p-2 rounded w-full outline-none focus:border-blue-500"></select>
+                            </div>
                             <div class="mb-6">
                                 <label class="font-bold block mb-2 text-sm">Orb Base Color:</label>
                                 <input type="color" id="${winId}_ai_color" value="${OS.state.aiColor}" class="w-16 h-10 p-1 border rounded cursor-pointer outline-none">
                             </div>
                             <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm shadow" onclick="OS.Apps._saveAISettings('${winId}')">Save AI Settings</button>
+                            
+                            <!-- Puter Sign In Section -->
+                            <div class="mt-8 pt-4 border-t border-gray-300">
+                                <h4 class="font-bold mb-1 text-sm text-gray-800">Puter.js Account Integration</h4>
+                                <p class="text-xs text-gray-500 mb-4">Sign in to Puter to enable advanced AI capabilities and API usage.</p>
+                                <div class="flex gap-2">
+                                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-sm shadow flex items-center gap-2" onclick="OS.Apps._puterSignIn()">
+                                        <i class="fas fa-sign-in-alt"></i> Sign in to Puter
+                                    </button>
+                                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 border border-gray-400 px-4 py-2 rounded text-sm shadow flex items-center gap-2" onclick="OS.Apps._puterCheckSignIn()">
+                                        <i class="fas fa-user-check"></i> Check Sign-In Status
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <div id="${winId}_v_apps" class="settings-view" style="display:none;">
@@ -1707,8 +1727,26 @@
                         const avatarBox = document.getElementById(`${winId}_acc_avatar`);
                         avatarBox.innerHTML = ''; avatarBox.style.backgroundImage = `url('${user.avatar}')`;
                     }
+                    
+                    OS.Apps._populateVoices(winId);
+                    if (window.speechSynthesis) {
+                        window.speechSynthesis.onvoiceschanged = () => OS.Apps._populateVoices(winId);
+                    }
                 }
             };
+        },
+        _populateVoices(winId) {
+            const select = document.getElementById(`${winId}_ai_voice`);
+            if (!select) return;
+            const voices = window.speechSynthesis.getVoices();
+            select.innerHTML = '<option value="">Default OS Voice</option>';
+            voices.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.voiceURI;
+                opt.textContent = `${v.name} (${v.lang})`;
+                if (OS.state.aiVoice === v.voiceURI) opt.selected = true;
+                select.appendChild(opt);
+            });
         },
         _switchSettingsView(winId, view) {
             const buttons = document.getElementById(winId).querySelectorAll('.w-48 button');
@@ -1782,16 +1820,51 @@
         async _saveAISettings(winId) {
             const name = document.getElementById(`${winId}_ai_name`).value.trim() || 'Nexus';
             const color = document.getElementById(`${winId}_ai_color`).value;
+            const voice = document.getElementById(`${winId}_ai_voice`).value;
             
             let settings = await NexusDB.get('settings', OS.state.user);
-            settings.aiName = name; settings.aiColor = color; await NexusDB.put('settings', settings);
+            settings.aiName = name; 
+            settings.aiColor = color; 
+            settings.aiVoice = voice;
+            await NexusDB.put('settings', settings);
             
-            OS.state.aiName = name; OS.state.aiColor = color; OS.UI.applyAIColor(color);
+            OS.state.aiName = name; 
+            OS.state.aiColor = color; 
+            OS.state.aiVoice = voice;
+            OS.UI.applyAIColor(color);
             OS.state.installedApps['aichat'].name = `${name} AI Chat`;
             document.getElementById('ai-container').title = `${name} Voice AI (Click to Listen)`;
             
             OS.UI.renderDesktopIcons(settings.desktopPins); OS.UI.renderStartMenuApps();
             OS.notify('Settings Saved', 'AI preferences updated.', 'fas fa-check');
+        },
+        async _puterSignIn() {
+            try {
+                if (typeof puter === 'undefined') throw new Error("Puter.js library is not loaded.");
+                const user = await puter.auth.signIn();
+                OS.UI.showModal({
+                    type: 'alert', 
+                    title: 'Signed In', 
+                    text: `Successfully signed in to Puter!<br><br><b>User ID:</b> ${Utils.escapeHTML(user.username || user.id || 'Unknown')}`
+                });
+            } catch (err) {
+                console.error("Puter Sign In Error:", err);
+                OS.UI.showModal({type: 'alert', title: 'Sign In Failed', text: err.message || 'There was an error signing in to Puter.'});
+            }
+        },
+        async _puterCheckSignIn() {
+            try {
+                if (typeof puter === 'undefined') throw new Error("Puter.js library is not loaded.");
+                const signedIn = puter.auth.isSignedIn();
+                if (signedIn) {
+                    OS.UI.showModal({type: 'alert', title: 'Sign-In Status', text: 'You are currently <b>signed in</b> to Puter.'});
+                } else {
+                    OS.UI.showModal({type: 'alert', title: 'Sign-In Status', text: 'You are <b>NOT signed in</b> to Puter.'});
+                }
+            } catch (err) {
+                console.error("Check Sign In Error:", err);
+                OS.UI.showModal({type: 'alert', title: 'Error', text: 'Could not check Puter sign-in status.'});
+            }
         },
         async _changeAccountAvatar(input, winId) {
             const file = input.files[0]; if(!file) return; const reader = new FileReader();
@@ -1927,7 +2000,17 @@
         stopListening() { this.isListening = false; document.getElementById('ai-container').classList.remove('ai-listening'); },
         speak(text) {
             if(!this.synth) return;
-            const u = new SpeechSynthesisUtterance(text); u.pitch = 1.1; u.rate = 1.0; this.synth.speak(u);
+            const u = new SpeechSynthesisUtterance(text); 
+            u.pitch = 1.1; 
+            u.rate = 1.0; 
+            
+            if (OS.state.aiVoice) {
+                const voices = this.synth.getVoices();
+                const selectedVoice = voices.find(v => v.voiceURI === OS.state.aiVoice);
+                if (selectedVoice) u.voice = selectedVoice;
+            }
+            
+            this.synth.speak(u);
         },
         async processCommand(text) {
             OS.notify('Heard Command', `"${text}"`, 'fas fa-microphone');
